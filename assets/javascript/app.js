@@ -25,21 +25,9 @@ $(document).ready(function () {
     var wins = 0;
     var loses = 0;
     // variable to hold interval 
-    var showQuestion;
-
+    // var showQuestion;
     var game = {
         gameOn: false,
-        questions: ["What is my name?", "How old am I?", "How many siblings do I have?"],
-        ans: [["James", "Tobi", "Frank", "Tom"],
-        [29, 33, 25, 35],
-        [0, 2, 3, 4]
-        ],
-        answers: {
-            qOne: ["James", "Tobi", "Frank", "Tom"],
-            qTwo: [29, 33, 25, 35],
-            qThree: [0, 2, 3, 4]
-        },
-        answerValue: [1, 0, 2],
         timesUp: false,
         timer: 10,
         // decrease timmer by 1
@@ -49,8 +37,12 @@ $(document).ready(function () {
             if (game.timer === 5) {
                 console.log("time is up")
                 clearInterval(counterId);
-                game.timesUp = true;
-            }
+                game.timesUp = true; 
+                $(".answer-body").html(" <h2>TIMES UP!!!! </h2> <br> The correct answer is <br> <hr>" +
+                        myQuestion[questionIndex].correctAnswer);
+                        questionIndex++;
+                        nextEvent();     
+            };
 
         },
         timerFunction: function () {
@@ -63,115 +55,119 @@ $(document).ready(function () {
     var myQuestion = [
         {
             question: "Who is the strongest?",
-            answers: ["Superman", "The Terminator", "Waluigi, obviously"], 
+            answers: ["Superman", "The Terminator", "Waluigi, obviously"],
             correctAnswer: "Superman"
         },
         {
             question: "What is the best site ever created?",
-            answers:["SitePoint","Simple Steps Code","Trick question; they're both the best" ], 
+            answers: ["SitePoint", "Simple Steps Code", "Trick question; they're both the best"],
             correctAnswer: "Trick question; they're both the best"
         }
     ];
 
-    
+    function displayQuestion(k) {
+          // reset game timer 
+          game.timer = 11;
+           // Display the current timer to the user 
+        $(".time-remaining").html("Time Remaining: " + game.timer);
+        game.timerFunction();
 
 
-    
+        // Creating container for the question with a new div
+        var questionContainer = $("<div>");
+        // add class to the new div 
+        questionContainer.addClass("card-header");
+        // add new div to the game area 
+        $(".game-area").html(questionContainer);
+        questionContainer.html(" <strong> Your Question: </strong> <br>" + myQuestion[k].question);
 
-    for (var i = 0; i < myQuestion.length; i++) {
-        var test = setInterval(console.log("interval: " + myQuestion[i].question), 2000)
+        var answerContainer = $("<div>");
+        answerContainer.addClass("card-body answer-body");
+        $(".game-area").append(answerContainer);
 
-    }
-    // try and use the .each method to cycle through the questions and answers. 
-    // for each object in the array push the question and answers for 30 seconds 
-    // if times up - display incorrect and the correct answer - increase loss by 1 
-    // if wrong answer selected - display incorrect and the correct answer  - increase loss by 1
-    // if correct answer selected - display 'correct' and the correct answer 
+        // For each option from the list of answers 
+        for (var i = 0; i < myQuestion[k].answers.length; i++) {
+            // create a new DIV
+            var option = $("<div>");
+            // give it a class of option 
+            option.addClass("option");
+            // give it a data attribute which has a value of the option 
+            option.attr("data-value", myQuestion[k].answers[i]);
+            // write the option to the new div 
+            option.html(myQuestion[k].answers[i] + " <hr> ");
+            // add the option to the body of options 
+            $(".answer-body").append(option);
+            game.gameOn = true;
 
-    console.log("ans " + game.ans[0][1]);
-
-
-    $("#button").on('click', function () {
-
-        function displayQuestion(k) {
-            
-            // Creating container for the question with a new div
-            var questionContainer = $("<div>");
-            // add class to the new div 
-            questionContainer.addClass("card-header");
-            // add new div to the game area 
-            $(".game-area").html(questionContainer);
-           questionContainer.html(" <strong> Your Question: </strong> <br>" + myQuestion[k].question);
-          
-           var answerContainer = $("<div>");
-           answerContainer.addClass("card-body answer-body");
-           $(".game-area").append(answerContainer);
-   
-           // For each option from the list of answers 
-           for (var i = 0; i < myQuestion[k].answers.length; i++) {
-               // create a new DIV
-               var option = $("<div>");
-               // give it a class of option 
-               option.addClass("option");
-               // give it a data attribute which has a value of the option 
-               option.attr("data-value", myQuestion[k].answers[i]);
-               // write the option to the new div 
-               option.html(myQuestion[k].answers[i] + " <hr> ");
-               // add the option to the body of options 
-               $(".answer-body").append(option);
-   
-            };
-          
-        //    questionIndex++;
-           if (questionIndex === myQuestion.length){
-               questionIndex = 0;
-
-           };
         };
 
+        //    questionIndex++;
+        if (questionIndex === myQuestion.length) {
+            questionIndex = 0;
+
+        };
+    };
+
+    function nextEvent(){
+        if (questionIndex < myQuestion.length){
+            setTimeout(displayQuestion, 3000, questionIndex);
+        }
+        // have a function to writer game over and allow the user to start over 
+        else ( setTimeout(console.log,3000, "game over"))
+        
+    };
+
+ 
+    
 
 
-        game.gameOn = true;
+
+
+    console.log("ans " + myQuestion.length);
+
+
+    $(document).on('click', "#button", function () { 
         // set timesup to false so that timer can decrease 
         game.timesUp = false;
-        // reset game timer 
-        game.timer = 11;
-        // Display the current timer to the user 
-        $(".time-remaining").html("Time Remaining: " + game.timer);
-         
+
         displayQuestion(questionIndex);
 
         // showQuestion = setInterval(displayQuestion, 7000);
         // displayQuestion();
 
+        
+        $(document).on("click", ".option", function () {
 
+            clearInterval(counterId);
 
-        game.timerFunction();
-
-        $(".option").on("click", function () {
-            
-            // this dont work if ($(".option").attr("data-value") === myQuestion[questionIndex].correctAnswer) {
-                // alert("you right")
+           // this dont work if ($(".option").attr("data-value") === myQuestion[questionIndex].correctAnswer) {
+            //  alert("you right")
             if ($(this).attr("data-value") === myQuestion[questionIndex].correctAnswer) {
                 $(".answer-body").html("Yay you got it right <br> The correct answer is <br> <hr>" +
-                myQuestion[questionIndex].correctAnswer);
+                    myQuestion[questionIndex].correctAnswer);
                 wins++;
-                setTimeout(displayQuestion, 3000,questionIndex);
-
+                questionIndex++;
+                nextEvent();
+    
             }
             else {
                 loses++;
                 $(".answer-body").html("Sorry that is inccorect <br> The correct answer is <br> <hr>" +
-                myQuestion[questionIndex].correctAnswer)
+                    myQuestion[questionIndex].correctAnswer);
+                    questionIndex++;
+                    nextEvent();
             };
             console.log("loses amout: " + loses)
             console.log($(".option").attr("data-value"))
         });
 
-
-
     });
 
+    if (game.gameOn === true){
+       
+    };
+
+   
 
 
 

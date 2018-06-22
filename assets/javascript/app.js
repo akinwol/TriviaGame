@@ -82,7 +82,7 @@ $(document).ready(function () {
 
     function displayQuestion(k) {
           // reset game timer 
-          game.timer = 11;
+          game.timer = 30;
            // Display the current timer to the user 
         $(".time-remaining").html("Time Remaining: " + game.timer);
         game.timerFunction();

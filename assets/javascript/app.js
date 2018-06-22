@@ -22,8 +22,10 @@
 $(document).ready(function () {
     var counterId;
     var questionIndex = 0;
-    var wins = 0;
-    var loses = 0;
+    var correctAnswer = 0;
+    var incorrectAnswer = 0;
+    var unansered = 0;
+
     // variable to hold interval 
     // var showQuestion;
     var game = {
@@ -35,10 +37,11 @@ $(document).ready(function () {
             game.timer--;
             $(".time-remaining").text("Time Remaining: " + game.timer);
             if (game.timer === 5) {
-                console.log("time is up")
+                console.log("time is up");
+                unansered++;
                 clearInterval(counterId);
                 game.timesUp = true; 
-                $(".answer-body").html(" <h2>TIMES UP!!!! </h2> <br> The correct answer is <br> <hr>" +
+                $(".answer-body").html(" <h2>TIMES UP!!!! </h2> <br> The correct answer is: <br> " +
                         myQuestion[questionIndex].correctAnswer);
                         questionIndex++;
                         nextEvent();     
@@ -54,15 +57,27 @@ $(document).ready(function () {
 
     var myQuestion = [
         {
-            question: "Who is the strongest?",
-            answers: ["Superman", "The Terminator", "Waluigi, obviously"],
-            correctAnswer: "Superman"
+            question: "Which park is the most filmed location in the world?",
+            answers: ["Stanley Park - Vancouver", "Central Park - New York", "Hyde Park - London","Park Güell - Barcelona" ],
+            correctAnswer: "Central Park - New York"
         },
         {
-            question: "What is the best site ever created?",
-            answers: ["SitePoint", "Simple Steps Code", "Trick question; they're both the best"],
-            correctAnswer: "Trick question; they're both the best"
+            question: "Who won more Academy Awards in his/her lifetime than any other person?",
+            answers: ["Katharine Hepburn", "Meryl Streep", "Denzel Washington", "Walt Disney"],
+            correctAnswer: "Walt Disney"
+        },
+        {
+            question: "'The road to greatness can take you to the edge', is the tagline of which 2014 American drama film? ",
+            answers: ["Boyhood", " A walk among the Tombstones", "Whiplash", "Draft day"],
+            correctAnswer: "Whiplash"
+        },
+        {
+            question: "What is the favorite food of the Teenage Mutant Ninja Turtles? ",
+            answers: ["Pizza", "Burgers", "Chicken", "They are vegan, so anything pant based"],
+            correctAnswer: "Pizza"
         }
+
+
     ];
 
     function displayQuestion(k) {
@@ -113,12 +128,23 @@ $(document).ready(function () {
             setTimeout(displayQuestion, 3000, questionIndex);
         }
         // have a function to writer game over and allow the user to start over 
-        else ( setTimeout(console.log,3000, "game over"))
+        else ( setTimeout(gameOver, 3000,))
         
     };
 
- 
-    
+    // clear time remaining 
+    // Message - Game Over  in the header 
+    // in the answer section - Here is how you did 
+    // correct answers, incorrect answers, unansered amounts 
+    // button to start over 
+   
+    function gameOver(){
+        $(".card-header").html("<strong> GAME OVER </strong>")
+        $(".answer-body").html("<h3> Here is how you did </h3> <br> Correct Ansers: " + correctAnswer +
+        "<br> Incorrect Answers: " + incorrectAnswer + " <br> Unanswered: " + unansered +
+            '<div> <a href="#" id="button" class="btn btn-primary">RESTART GAME </a></div>');
+
+    };
 
 
 
@@ -128,7 +154,11 @@ $(document).ready(function () {
 
     $(document).on('click', "#button", function () { 
         // set timesup to false so that timer can decrease 
-        game.timesUp = false;
+        // game.timesUp = false;
+         // Areset all the variable for the questions and correct answers 
+        questionIndex = 0;
+        correctAnswer = 0;
+        incorrectAnswer = 0;
 
         displayQuestion(questionIndex);
 
@@ -143,22 +173,20 @@ $(document).ready(function () {
            // this dont work if ($(".option").attr("data-value") === myQuestion[questionIndex].correctAnswer) {
             //  alert("you right")
             if ($(this).attr("data-value") === myQuestion[questionIndex].correctAnswer) {
-                $(".answer-body").html("Yay you got it right <br> The correct answer is <br> <hr>" +
+                $(".answer-body").html("Yay you got it right <br> The correct answer is: <br>" +
                     myQuestion[questionIndex].correctAnswer);
-                wins++;
+                correctAnswer++;
                 questionIndex++;
                 nextEvent();
     
             }
             else {
-                loses++;
-                $(".answer-body").html("Sorry that is inccorect <br> The correct answer is <br> <hr>" +
+                incorrectAnswer++;
+                $(".answer-body").html("Sorry that is inccorect <br> The correct answer is:  <br> " +
                     myQuestion[questionIndex].correctAnswer);
                     questionIndex++;
                     nextEvent();
             };
-            console.log("loses amout: " + loses)
-            console.log($(".option").attr("data-value"))
         });
 
     });

@@ -36,7 +36,7 @@ $(document).ready(function () {
         decrease: function () {
             game.timer--;
             $(".time-remaining").text("Time Remaining: " + game.timer);
-            if (game.timer === 5) {
+            if (game.timer === 0) {
                 console.log("time is up");
                 unansered++;
                 clearInterval(counterId);
